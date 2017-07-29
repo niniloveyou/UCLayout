@@ -7,11 +7,20 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="deadline.uclayout.MainActivity">
+    android:paddingBottom="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:text="Hello World!"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <deadline.uclayout.UcVoiceView
+        android:id="@+id/ucVoice"
+        android:layout_centerHorizontal="true"
+        android:layout_width="80dp"
+        android:layout_height="160dp" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/start"
+        android:text="start"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:layout_width="80dp"
+        android:layout_height="50dp"/>
 </RelativeLayout>
