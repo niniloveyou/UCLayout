@@ -1,5 +1,7 @@
 package deadline.uclayout;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -20,7 +22,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 public class UcVoiceView extends View{
 
-    private static final float BEZIER_FACTOR = 0.552284749831f;
+    private static final float BEZIER_FACTOR = 0.551915024494f;
 
     private int animationDuration = 500;
 
@@ -43,6 +45,8 @@ public class UcVoiceView extends View{
     private float friction, alpha;
 
     private AnimatorSet animatorSet;
+
+    private boolean isInAnimation;
 
     public UcVoiceView(Context context) {
         this(context, null);
@@ -67,7 +71,6 @@ public class UcVoiceView extends View{
      * 执行显示
      */
     public void showVoice(){
-        clearAnimation();
         getAnimationSet(new float[]{0, 1}, true);
     }
 
@@ -75,11 +78,14 @@ public class UcVoiceView extends View{
      * 执行隐藏
      */
     public void hideVoice(){
-        clearAnimation();
         getAnimationSet(new float[]{1, 0}, false);
     }
 
     private void getAnimationSet(float[] values, boolean show){
+        if(isInAnimation){
+            return;
+        }
+        isInAnimation = true;
         animatorSet = new AnimatorSet();
         ValueAnimator animator = ValueAnimator.ofFloat(values);
         animator.setDuration(animationDuration);
@@ -111,6 +117,13 @@ public class UcVoiceView extends View{
             }
         });
 
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                isInAnimation = false;
+            }
+        });
         animatorSet.playTogether(animator, animator2);
         animatorSet.start();
     }
@@ -146,7 +159,9 @@ public class UcVoiceView extends View{
         calculatePath();
         canvas.drawCircle(centerX, centerY, mRadius, mPaint);
         canvas.drawPath(path, mPaint);
-        voiceDrawable.draw(canvas);
+        if(voiceDrawable != null) {
+            voiceDrawable.draw(canvas);
+        }
     }
 
     private void calculatePath(){
@@ -165,7 +180,7 @@ public class UcVoiceView extends View{
 
         //左边贝塞尔曲线的控制点1
         float p3X = p1X;
-        float p3Y = p1Y + mRadius * BEZIER_FACTOR * (1 - friction);
+        float p3Y = p1Y + mRadius * BEZIER_FACTOR;
 
         //左边贝塞尔曲线的控制点2
         float p4X = mRadius * (1 -  BEZIER_FACTOR);
@@ -177,7 +192,7 @@ public class UcVoiceView extends View{
 
         //右边贝塞尔曲线的控制点1
         float p5X = p2X;
-        float p5Y = p2Y + mRadius * BEZIER_FACTOR * (1 - friction);
+        float p5Y = p2Y + mRadius * BEZIER_FACTOR;
 
         //右边贝塞尔曲线的控制点2
         float p6X = anchorX  + mRadius * BEZIER_FACTOR;
